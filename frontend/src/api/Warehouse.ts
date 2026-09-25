@@ -1,21 +1,23 @@
-import { mockData } from "../mocks/seedData";
+import { requestJson } from "./http";
+import { localList, localSave } from "../services/localGateway";
 import type { Warehouse } from "../types/Warehouse";
 
 const endpoint = "/api/warehouse";
 
 export async function listWarehouse(): Promise<Warehouse[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
+  try {
+    return await requestJson<Warehouse[]>(endpoint);
+  } catch {
+    // Local fallback keeps the UI available during offline review.
+    return localList("warehouse");
   }
-  return [...(mockData.warehouse as unknown as Warehouse[])];
 }
 
-export async function saveWarehouse(payload: Warehouse) {
-  console.info("save Warehouse", payload);
+export async function saveWarehouse(payload: Warehouse): Promise<Warehouse> {
+  const rows = localList("warehouse");
+  const index = rows.findIndex((row) => row.id === payload.id);
+  if (index >= 0) rows[index] = payload;
+  else rows.push(payload);
+  localSave("warehouse", rows);
   return payload;
 }

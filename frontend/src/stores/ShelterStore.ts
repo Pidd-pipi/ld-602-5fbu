@@ -1,6 +1,25 @@
 import { defineStore } from "pinia";
 import { listShelter } from "../api/Shelter";
+import type { Shelter } from "../types/Shelter";
+
+interface State {
+  rows: Shelter[];
+  loading: boolean;
+}
+
 export const useShelterStore = defineStore("shelter", {
-  state: () => ({ rows: [] as Awaited<ReturnType<typeof listShelter>>, loading: false }),
-  actions: { async load() { this.loading = true; this.rows = await listShelter(); this.loading = false; } }
+  state: (): State => ({ rows: [], loading: false }),
+  getters: {
+    byId: (state) => (id: number) => state.rows.find((row) => row.id === id)
+  },
+  actions: {
+    async load() {
+      this.loading = true;
+      try {
+        this.rows = await listShelter();
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
 });

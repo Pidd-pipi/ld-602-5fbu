@@ -1,0 +1,15 @@
+{
+  "name": "rescue-stock-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "端到端测试依赖，独立安装，不影响前端生产构建",
+  "scripts": {
+    "test:e2e": "tsx dispatch-flow.spec.ts",
+    "install:browser": "playwright install chromium"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0",
+    "tsx": "^4.19.0"
+  }
+}

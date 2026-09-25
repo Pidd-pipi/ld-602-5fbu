@@ -1,21 +1,23 @@
-import { mockData } from "../mocks/seedData";
+import { requestJson } from "./http";
+import { localList, localSave } from "../services/localGateway";
 import type { InventoryBatch } from "../types/InventoryBatch";
 
 const endpoint = "/api/inventory-batch";
 
 export async function listInventoryBatch(): Promise<InventoryBatch[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
+  try {
+    return await requestJson<InventoryBatch[]>(endpoint);
+  } catch {
+    // Local fallback keeps the UI available during offline review.
+    return localList("inventoryBatch");
   }
-  return [...(mockData.inventoryBatch as unknown as InventoryBatch[])];
 }
 
-export async function saveInventoryBatch(payload: InventoryBatch) {
-  console.info("save InventoryBatch", payload);
+export async function saveInventoryBatch(payload: InventoryBatch): Promise<InventoryBatch> {
+  const rows = localList("inventoryBatch");
+  const index = rows.findIndex((row) => row.id === payload.id);
+  if (index >= 0) rows[index] = payload;
+  else rows.push(payload);
+  localSave("inventoryBatch", rows);
   return payload;
 }

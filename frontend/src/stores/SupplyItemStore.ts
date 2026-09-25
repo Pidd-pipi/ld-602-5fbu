@@ -1,6 +1,25 @@
 import { defineStore } from "pinia";
 import { listSupplyItem } from "../api/SupplyItem";
+import type { SupplyItem } from "../types/SupplyItem";
+
+interface State {
+  rows: SupplyItem[];
+  loading: boolean;
+}
+
 export const useSupplyItemStore = defineStore("supplyItem", {
-  state: () => ({ rows: [] as Awaited<ReturnType<typeof listSupplyItem>>, loading: false }),
-  actions: { async load() { this.loading = true; this.rows = await listSupplyItem(); this.loading = false; } }
+  state: (): State => ({ rows: [], loading: false }),
+  getters: {
+    byId: (state) => (id: number) => state.rows.find((row) => row.id === id)
+  },
+  actions: {
+    async load() {
+      this.loading = true;
+      try {
+        this.rows = await listSupplyItem();
+      } finally {
+        this.loading = false;
+      }
+    }
+  }
 });

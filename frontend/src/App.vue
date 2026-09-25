@@ -1,26 +1,45 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { routes } from "./router/routes";
-import { mockData } from "./mocks/seedData";
-import StatusBadge from "./components/common/StatusBadge.vue";
-import StatCard from "./components/common/StatCard.vue";
-const active = ref<string>(routes[0]?.route ?? "/dashboard");
-const current = computed(() => routes.find((route) => route.route === active.value) ?? routes[0]);
-const entries = Object.entries(mockData);
+import RoleSwitcher from "./components/common/RoleSwitcher.vue";
+
+const route = useRoute();
+const currentTitle = computed(() => (route.meta.title as string) ?? "城市防灾应急物资调度系统");
 </script>
 
 <template>
   <div class="shell">
     <aside>
-      <div class="brand">城市防灾应急物资调度系统</div>
+      <div class="brand">
+        <strong>城市防灾应急</strong>
+        <span>物资调度 rescue-stock</span>
+      </div>
       <nav>
-        <button v-for="route in routes" :key="route.route" :class="{ active: active === route.route }" @click="active = route.route">{{ route.name }}</button>
+        <RouterLink
+          v-for="item in routes.filter((r) => r.name)"
+          :key="item.path"
+          :to="item.path"
+          class="nav-item"
+          :class="{ active: route.path.startsWith(item.path) }"
+        >
+          {{ item.meta?.title }}
+        </RouterLink>
       </nav>
+      <div class="aside-foot">
+        <p>本地数据模式</p>
+        <small>审批/出库/签收进度写入浏览器，切页与刷新不丢失</small>
+      </div>
     </aside>
     <main class="page">
-      <section class="page-head"><div><p class="eyebrow">rescue-stock</p><h1>{{ current?.name }}</h1></div><StatusBadge value="LOCAL_DATA" /></section>
-      <section class="metrics"><StatCard label="核心模型" :value="entries.length" /><StatCard label="共享枚举" :value="3" /><StatCard label="本地记录" :value="entries.reduce((s, [, rows]) => s + rows.length, 0)" /></section>
-      <section class="workbench"><div class="panel wide"><h2>业务数据</h2><article class="row" v-for="[key, rows] in entries" :key="key"><strong>{{ key }}</strong><span>{{ rows.length }} 条</span><StatusBadge value="READY" /></article></div><div class="panel"><h2>联动检查</h2><p>页面、store、API、构造器、日志模板和枚举常量均按提示词拆分。</p></div></section>
+      <section class="page-head">
+        <div>
+          <p class="eyebrow">rescue-stock</p>
+          <h1>{{ currentTitle }}</h1>
+        </div>
+        <RoleSwitcher />
+      </section>
+      <RouterView />
     </main>
   </div>
 </template>

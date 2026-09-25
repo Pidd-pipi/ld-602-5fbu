@@ -1,21 +1,23 @@
-import { mockData } from "../mocks/seedData";
+import { requestJson } from "./http";
+import { localList, localSave } from "../services/localGateway";
 import type { Shelter } from "../types/Shelter";
 
 const endpoint = "/api/shelter";
 
 export async function listShelter(): Promise<Shelter[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
+  try {
+    return await requestJson<Shelter[]>(endpoint);
+  } catch {
+    // Local fallback keeps the UI available during offline review.
+    return localList("shelter");
   }
-  return [...(mockData.shelter as unknown as Shelter[])];
 }
 
-export async function saveShelter(payload: Shelter) {
-  console.info("save Shelter", payload);
+export async function saveShelter(payload: Shelter): Promise<Shelter> {
+  const rows = localList("shelter");
+  const index = rows.findIndex((row) => row.id === payload.id);
+  if (index >= 0) rows[index] = payload;
+  else rows.push(payload);
+  localSave("shelter", rows);
   return payload;
 }

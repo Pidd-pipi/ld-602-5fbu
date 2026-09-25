@@ -1,21 +1,23 @@
-import { mockData } from "../mocks/seedData";
+import { requestJson } from "./http";
+import { localList, localSave } from "../services/localGateway";
 import type { SupplyItem } from "../types/SupplyItem";
 
 const endpoint = "/api/supply-item";
 
 export async function listSupplyItem(): Promise<SupplyItem[]> {
-  if (typeof fetch !== "undefined" && endpoint.startsWith("/api") && true) {
-    try {
-      const res = await fetch(endpoint);
-      if (res.ok) return await res.json();
-    } catch {
-      // Local mock fallback keeps the UI available during offline review.
-    }
+  try {
+    return await requestJson<SupplyItem[]>(endpoint);
+  } catch {
+    // Local fallback keeps the UI available during offline review.
+    return localList("supplyItem");
   }
-  return [...(mockData.supplyItem as unknown as SupplyItem[])];
 }
 
-export async function saveSupplyItem(payload: SupplyItem) {
-  console.info("save SupplyItem", payload);
+export async function saveSupplyItem(payload: SupplyItem): Promise<SupplyItem> {
+  const rows = localList("supplyItem");
+  const index = rows.findIndex((row) => row.id === payload.id);
+  if (index >= 0) rows[index] = payload;
+  else rows.push(payload);
+  localSave("supplyItem", rows);
   return payload;
 }
