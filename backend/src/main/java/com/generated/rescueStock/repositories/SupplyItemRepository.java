@@ -1,1 +1,18 @@
-package com.generated.rescueStock.repositories; import java.util.*; import org.springframework.stereotype.Repository; @Repository public class SupplyItemRepository { public List<Map<String,Object>> findAll(){ return List.of(Map.of("id",1,"name","应急物资","status","READY")); } }
+package com.generated.rescueStock.repositories;
+
+import com.generated.rescueStock.models.SupplyItem;
+import java.util.List;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class SupplyItemRepository {
+  private final InMemoryDataRepository data;
+
+  public SupplyItemRepository(InMemoryDataRepository data) {
+    this.data = data;
+  }
+
+  public List<SupplyItem> findAll() {
+    return data.supplyItems;
+  }
+}

@@ -1,1 +1,21 @@
-package com.generated.rescueStock.controllers; import java.util.*; import org.springframework.web.bind.annotation.*; import com.generated.rescueStock.services.WarehouseService; @RestController @RequestMapping("/api/warehouse") public class WarehouseController { private final WarehouseService service; public WarehouseController(WarehouseService service){this.service=service;} @GetMapping public List<Map<String,Object>> list(){return service.list();} }
+package com.generated.rescueStock.controllers;
+
+import java.util.List;
+import org.springframework.web.bind.annotation.*;
+import com.generated.rescueStock.models.Warehouse;
+import com.generated.rescueStock.services.WarehouseService;
+
+@RestController
+@RequestMapping("/api/warehouse")
+public class WarehouseController {
+  private final WarehouseService service;
+
+  public WarehouseController(WarehouseService service) {
+    this.service = service;
+  }
+
+  @GetMapping
+  public List<Warehouse> list() {
+    return service.list();
+  }
+}

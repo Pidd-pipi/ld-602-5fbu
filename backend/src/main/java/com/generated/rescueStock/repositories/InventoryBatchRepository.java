@@ -1,1 +1,18 @@
-package com.generated.rescueStock.repositories; import java.util.*; import org.springframework.stereotype.Repository; @Repository public class InventoryBatchRepository { public List<Map<String,Object>> findAll(){ return List.of(Map.of("id",1,"name","库存批次","status","READY")); } }
+package com.generated.rescueStock.repositories;
+
+import com.generated.rescueStock.models.InventoryBatch;
+import java.util.List;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class InventoryBatchRepository {
+  private final InMemoryDataRepository data;
+
+  public InventoryBatchRepository(InMemoryDataRepository data) {
+    this.data = data;
+  }
+
+  public List<InventoryBatch> findAll() {
+    return data.batches;
+  }
+}

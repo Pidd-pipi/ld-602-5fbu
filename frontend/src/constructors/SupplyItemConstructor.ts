@@ -6,8 +6,8 @@ export const createDefaultSupplyItem = (overrides: Partial<SupplyItem> = {}): Su
   name: "name 1" as never,
   category: "WATER" as never,
   unit: "unit 1" as never,
-  safety_stock: "safety stock 1" as never,
-  expire_days: "expire days 1" as never,
+  safety_stock: 100,
+  expire_days: 365,
   storage_requirement: "storage requirement 1" as never,
   ...overrides
 });

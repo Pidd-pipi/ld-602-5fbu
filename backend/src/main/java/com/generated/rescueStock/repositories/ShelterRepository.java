@@ -1,1 +1,18 @@
-package com.generated.rescueStock.repositories; import java.util.*; import org.springframework.stereotype.Repository; @Repository public class ShelterRepository { public List<Map<String,Object>> findAll(){ return List.of(Map.of("id",1,"name","避难安置点","status","READY")); } }
+package com.generated.rescueStock.repositories;
+
+import com.generated.rescueStock.models.Shelter;
+import java.util.List;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public class ShelterRepository {
+  private final InMemoryDataRepository data;
+
+  public ShelterRepository(InMemoryDataRepository data) {
+    this.data = data;
+  }
+
+  public List<Shelter> findAll() {
+    return data.shelters;
+  }
+}
